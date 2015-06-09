@@ -1,5 +1,5 @@
 /**
- * React (with addons) v0.13.23
+ * React (with addons) v0.14.0-alpha3
  */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.React = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 /**
@@ -3880,7 +3880,7 @@ assign(React, ReactIsomorphic);
 assign(React, ReactDOMClient);
 assign(React, ReactDOMServer);
 
-React.version = '0.13.23';
+React.version = '0.14.0-alpha3';
 
 module.exports = React;
 },{"27":27,"45":45,"52":52,"70":70}],30:[function(_dereq_,module,exports){
@@ -6939,6 +6939,10 @@ function processChildContext(context, inst) {
   return context;
 }
 
+function isCustomComponent(tagName, props) {
+  return tagName.indexOf('-') >= 0 || props.is != null;
+}
+
 /**
  * Creates a new React class that is idempotent and capable of containing other
  * React components. It accepts event listeners and DOM properties that are
@@ -7082,7 +7086,7 @@ ReactDOMComponent.Mixin = {
           propValue = CSSPropertyOperations.createMarkupForStyles(propValue);
         }
         var markup = null;
-        if (this._tag != null && this._tag.indexOf('-') >= 0) {
+        if (this._tag != null && isCustomComponent(this._tag, props)) {
           markup = DOMPropertyOperations.createMarkupForCustomAttribute(propKey, propValue);
         } else {
           markup = DOMPropertyOperations.createMarkupForProperty(propKey, propValue);
@@ -7298,7 +7302,7 @@ ReactDOMComponent.Mixin = {
         } else if (lastProp) {
           deleteListener(this._rootNodeID, propKey);
         }
-      } else if (this._tag.indexOf('-') >= 0) {
+      } else if (isCustomComponent(this._tag, nextProps)) {
         BackendIDOperations.updateAttributeByID(this._rootNodeID, propKey, nextProp);
       } else if (DOMProperty.isStandardName[propKey] || DOMProperty.isCustomAttribute(propKey)) {
         BackendIDOperations.updatePropertyByID(this._rootNodeID, propKey, nextProp);
